@@ -18,9 +18,6 @@ public class ParticleSim extends ApplicationAdapter implements InputProcessor{
     public World world;
     public float delta;
 
-    public Particle part1;
-    public Particle part2;
-
     @Override
     public void create() {
         cam = new OrthographicCamera();
@@ -30,9 +27,6 @@ public class ParticleSim extends ApplicationAdapter implements InputProcessor{
         world = new World();
         rend = new ShapeRenderer();
         Gdx.input.setInputProcessor(this);
-        /*
-        part1 = new Particle(1,10,5,world);
-        part2 = new Particle(1,8,5,world);
 
         for(int i =0;i<world.grid.length;i++)
         {
@@ -41,12 +35,7 @@ public class ParticleSim extends ApplicationAdapter implements InputProcessor{
                     new Particle(1,i,j,world);
             }
         }
-
-         */
-
-
     }
-
     @Override
     public void render() {
         Gdx.gl.glClearColor(0, 0, 0, 1f);
@@ -67,8 +56,7 @@ public class ParticleSim extends ApplicationAdapter implements InputProcessor{
         world.gridDraw(rend);
         rend.end();
         rend.begin(ShapeRenderer.ShapeType.Filled);
-        world.partDraw(rend);
-        //world.particleDebug(rend);
+        world.particleDebug(rend);
         rend.end();
 
     }
@@ -103,15 +91,18 @@ public class ParticleSim extends ApplicationAdapter implements InputProcessor{
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button != Input.Buttons.LEFT || pointer > 0) return false;
-        System.out.println("test");
         cam.unproject(tp.set(screenX, screenY, 0));
         dragging = true;
-        int x = (int) ((int)tp.x/world.rowCount);
-        int y = (int)Math.abs(Gdx.graphics.getHeight()-tp.y)/10;
-        System.out.println(tp.x+" "+tp.y+" "+x + " "+ y+" "+ world.grid.length);
-
-        if(world.grid[y][x]==null)
-            world.grid[y][x]=(new Particle(1,y,x,world));
+        int x = (int)tp.x;
+        int y = (int)tp.y;
+        if(tp.x> world.colCount)
+            x = (int) world.colCount-2;
+        if(tp.y> world.rowCount)
+            y = (int) world.rowCount-1;
+        if(world.grid[y][x]==null) {
+            world.grid[y][x] = (new Particle(1, y, x, world));
+            Gdx.app.log("Particle", "New Particle: " + x+","+y);
+        }
 
 
 

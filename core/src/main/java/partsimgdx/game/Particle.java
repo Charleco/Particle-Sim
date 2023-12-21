@@ -38,7 +38,7 @@ public class Particle {
     }
     public void grav(float delta)
     {
-        vel.y -= 5f*delta;
+        vel.y -= 50f*delta;
     }
 
 
