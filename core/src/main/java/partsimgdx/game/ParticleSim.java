@@ -41,6 +41,8 @@ public class ParticleSim extends ApplicationAdapter implements InputProcessor{
         Gdx.gl.glClearColor(0, 0, 0, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         delta = Gdx.graphics.getDeltaTime();
+        world.gridUpdate();
+        world.gridBalance();
         for(int i =1;i<world.grid.length;i++)
         {
             for(int j = 1;j<world.grid[i].length;j++) {
@@ -51,7 +53,8 @@ public class ParticleSim extends ApplicationAdapter implements InputProcessor{
                 }
             }
         }
-        world.gridUpdate();
+        //world.rightGridBalance();
+        //world.leftGridBalance();
         rend.begin(ShapeRenderer.ShapeType.Line);
         world.gridDraw(rend);
         rend.end();

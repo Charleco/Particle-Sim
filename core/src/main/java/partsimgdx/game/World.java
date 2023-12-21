@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class World {
@@ -12,10 +13,14 @@ public class World {
     public ArrayList<Particle> partList;
     public float colCount;
     public float rowCount;
+
+
+    Random rand = new Random();
     public World()
     {
         colCount = Gdx.graphics.getWidth()/10;
         rowCount = Gdx.graphics.getHeight()/10;
+        Gdx.app.log("Grid", "colCount: "+colCount+" rowCount:"+rowCount);
         grid = new Particle[(int) rowCount][(int) colCount];
         partList = new ArrayList<>();
     }
@@ -26,7 +31,7 @@ public class World {
         {
             for(int j = 1;j<grid[i].length;j++) {
                 if(this.grid[i][j]!=null) {
-                    rend.rect((int) j*10, (int)i*10, 10, 10);
+                    rend.rect(Math.abs(grid[i][j].pos.x*10), Math.abs(grid[i][j].pos.y*10), 10, 10);
                 }
             }
         }
@@ -51,14 +56,14 @@ public class World {
     }
     public void particleDebug(ShapeRenderer rend)
     {
-        for(int i =1;i<grid.length;i++)
+        for(int y =1;y<grid.length;y++)
         {
-            for(int j = 1;j<grid[i].length;j++) {
-                if(this.grid[i][j]!=null) {
+            for(int x = 1;x<grid[y].length;x++) {
+                if(this.grid[y][x]!=null) {
                     rend.setColor(Color.BLUE);
-                    rend.rect(Math.abs(grid[i][j].pos.x*10), Math.abs(grid[i][j].pos.y*10), 10, 10);
+                    rend.rect((int) x*10, (int)y*10, 10, 10);
                     rend.setColor(Color.RED);
-                    rend.circle((j*10)+5, (i*10)+5, 2);
+                    rend.circle((x*10)+5, (y*10)+5, 2);
                 }
             }
         }
@@ -66,13 +71,81 @@ public class World {
     public void gridDraw(ShapeRenderer rend)
     {
         rend.setColor(Color.WHITE);
-        for(int i =0;i<grid.length;i++)
+        for(int y =0;y<grid.length;y++)
         {
-            for(int j = 0;j<grid[i].length;j++) {
-                rend.line(j*10,0,j*10,Gdx.graphics.getHeight());
-                rend.line(0,i*10,Gdx.graphics.getWidth(),i*10);
+            for(int x = 0;x<grid[y].length;x++) {
+                rend.line(x*10,0,x*10,Gdx.graphics.getHeight());
+                rend.line(0,y*10,Gdx.graphics.getWidth(),y*10);
             }
         }
+    }
+    public void rightGridBalance()
+    {
+        for(int y =1;y<grid.length-1;y++)
+        {
+            for(int x = 1;x<grid[y].length-1;x++) {
+                if(this.grid[y][x]!=null) {
+                    if(this.grid[y][x+1]==null&&y>1&& this.grid[y][x].vel.y==0) {
+                        this.grid[y][x].pos.x+=1;
+                    }
+
+                }
+            }
+        }
+    }
+    public void leftGridBalance()
+    {
+        for(int y =grid.length-1;y>=1;y--)
+        {
+            for(int x = grid[y].length-1;x>=1;x--) {
+                if(this.grid[y][x]!=null) {
+                    if(this.grid[y][x-1]==null&&y>1&& this.grid[y][x].vel.y==0) {
+                        this.grid[y][x].pos.x-=1;
+                    }
+
+                }
+            }
+        }
+    }
+    public void gridBalance()
+    {
+        for(int y =1;y<grid.length-1;y++)
+        {
+            for(int x = 1;x<grid[y].length-1;x++) {
+                //if statement hell
+                if(this.grid[y][x]!=null&&this.grid[y+1][x]==null&&this.grid[y-1][x]!=null) {
+                    int leftCol = this.partCount(x-1);
+                    int rightCol = this.partCount(x+1);
+                    int thisCol = this.partCount(x);
+                    if((leftCol<thisCol)&&(leftCol<rightCol)&&this.grid[y][x-1]==null)
+                    {
+                        this.grid[y][x].pos.x-=1;
+                    }
+                    else if((rightCol<thisCol)&&(rightCol<leftCol)&&this.grid[y][x+1]==null)
+                    {
+                        this.grid[y][x].pos.x+=1;
+                    }
+                    else if((rightCol==leftCol && leftCol<thisCol)&&this.grid[y][x+1]==null&&this.grid[y][x-1]==null)
+                    {
+                        if(rand.nextDouble()>.5){
+                            this.grid[y][x].pos.x-=1;
+                        }
+                        else{
+                            this.grid[y][x].pos.x+=1;
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+    public int partCount(int col)
+    {
+        int count = 0;
+        for(int y = 1;y<grid.length;y++)
+            if(grid[y][col]!=null&&grid[y][col].vel.y==0)
+                count++;
+        return count;
     }
 
 }
