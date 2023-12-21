@@ -13,13 +13,14 @@ public class World {
     public ArrayList<Particle> partList;
     public float colCount;
     public float rowCount;
-
+    public int scale;
 
     Random rand = new Random();
-    public World()
+    public World(int scale)
     {
-        colCount = Gdx.graphics.getWidth()/10;
-        rowCount = Gdx.graphics.getHeight()/10;
+        this.scale = scale;
+        colCount = Gdx.graphics.getWidth()/scale;
+        rowCount = Gdx.graphics.getHeight()/scale;
         Gdx.app.log("Grid", "colCount: "+colCount+" rowCount:"+rowCount);
         grid = new Particle[(int) rowCount][(int) colCount];
         partList = new ArrayList<>();
@@ -31,7 +32,7 @@ public class World {
         {
             for(int j = 1;j<grid[i].length;j++) {
                 if(this.grid[i][j]!=null) {
-                    rend.rect(Math.abs(grid[i][j].pos.x*10), Math.abs(grid[i][j].pos.y*10), 10, 10);
+                    rend.rect(Math.abs(grid[i][j].pos.x*10), Math.abs(grid[i][j].pos.y*10), scale, scale);
                 }
             }
         }
@@ -61,9 +62,9 @@ public class World {
             for(int x = 1;x<grid[y].length;x++) {
                 if(this.grid[y][x]!=null) {
                     rend.setColor(Color.BLUE);
-                    rend.rect((int) x*10, (int)y*10, 10, 10);
+                    rend.rect((int) x*scale, (int)y*scale, scale, scale);
                     rend.setColor(Color.RED);
-                    rend.circle((x*10)+5, (y*10)+5, 2);
+                    rend.circle((x*scale)+scale/2, (y*scale)+scale/2, scale/5);
                 }
             }
         }
@@ -74,8 +75,8 @@ public class World {
         for(int y =0;y<grid.length;y++)
         {
             for(int x = 0;x<grid[y].length;x++) {
-                rend.line(x*10,0,x*10,Gdx.graphics.getHeight());
-                rend.line(0,y*10,Gdx.graphics.getWidth(),y*10);
+                rend.line(x*scale,0,x*scale,Gdx.graphics.getHeight());
+                rend.line(0,y*scale,Gdx.graphics.getWidth(),y*scale);
             }
         }
     }

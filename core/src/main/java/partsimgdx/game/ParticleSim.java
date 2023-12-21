@@ -24,7 +24,7 @@ public class ParticleSim extends ApplicationAdapter implements InputProcessor{
         view = new ExtendViewport(100,100,cam);
         cam.position.set(view.getWorldWidth()/2,view.getWorldHeight()/2,0);
         cam.update();
-        world = new World();
+        world = new World(5);
         rend = new ShapeRenderer();
         Gdx.input.setInputProcessor(this);
 
