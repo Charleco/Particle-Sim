@@ -7,21 +7,51 @@ import java.util.Random;
 
 
 public class World {
-    public Particle[][] grid;
-    public ArrayList<Particle> partList;
-    public float colCount;
-    public float rowCount;
-    public int scale;
+    private final Particle[][] grid;
+    private final ArrayList<Particle> partList;
+    private final int colCount;
+    private final int rowCount;
+    private final int scale;
 
     Random rand = new Random();
     public World(int scale)
     {
         this.scale = scale;
-        colCount = Gdx.graphics.getWidth()/scale;
-        rowCount = Gdx.graphics.getHeight()/scale;
+        this.colCount = Gdx.graphics.getWidth()/scale;
+        this.rowCount = Gdx.graphics.getHeight()/scale;
         Gdx.app.log("Grid", "colCount: "+colCount+" rowCount:"+rowCount);
-        grid = new Particle[(int) rowCount][(int) colCount];
-        partList = new ArrayList<>();
+        this.grid = new Particle[(int) rowCount][(int) colCount];
+        this.partList = new ArrayList<>();
+    }
+    public int getColCount()
+    {
+        return this.colCount;
+    }
+    public int getRowCount()
+    {
+        return this.rowCount;
+    }
+    public Particle[][] getGrid()
+    {
+        return this.grid;
+    }
+    public ArrayList<Particle> getPartList()
+    {
+        return this.partList;
+    }
+    public void popGrid()
+    {
+        for(int y = 1;y<grid.length;y++)
+        {
+            for(int x =1;x< grid[y].length;x++)
+            {
+                if(rand.nextDouble()>.7)
+                {
+                    grid[y][x]=new Particle(1,y,x,this);
+                }
+
+            }
+        }
     }
     public void gridUpdate()
     {
@@ -31,8 +61,8 @@ public class World {
             for(int j = 0;j<grid[i].length;j++) {
                 if(this.grid[i][j]!=null) {
                     partCnt++;
-                    int newRow=(int)(grid[i][j].pos.y);
-                    int newCol=(int)(grid[i][j].pos.x);
+                    int newRow=(int)(grid[i][j].getPos().y);
+                    int newCol=(int)(grid[i][j].getPos().x);
                     if(newRow!=j || newCol!=i)
                     {
                         Particle temp = grid[i][j];
@@ -65,16 +95,12 @@ public class World {
                     int rightCol = partCount(x + 1);
                     int thisCol = partCount(x);
 
-                    if (leftCol < thisCol && leftCol < rightCol && grid[y][x - 1] == null) {
+                    if (leftCol < thisCol && leftCol < rightCol && grid[y][x - 1] == null && thisCol-leftCol>1) {
                         moveParticle(x, y, x - 1, y);
-                    } else if (rightCol < thisCol && rightCol < leftCol && grid[y][x + 1] == null) {
+                    } else if (rightCol < thisCol && rightCol < leftCol && grid[y][x + 1] == null && thisCol-rightCol>1) {
                         moveParticle(x, y, x + 1, y);
                     }
-                    else if(thisCol-leftCol==1 && thisCol-rightCol==1)
-                    {
-
-                    }
-                    else if (rightCol == leftCol && leftCol < thisCol) {
+                    else if (rightCol == leftCol && leftCol < thisCol && thisCol-leftCol>1) {
                         if (rand.nextDouble() > 0.5 && grid[y][x - 1] == null) {
                             moveParticle(x, y, x - 1, y);
                         } else if (grid[y][x + 1] == null) {
@@ -90,8 +116,8 @@ public class World {
         Particle temp = grid[oldY][oldX];
         grid[oldY][oldX] = null;
         grid[newY][newX] = temp;
-        temp.pos.x = newX;
-        temp.pos.y = newY;
+        temp.getPos().x = newX;
+        temp.getPos().y = newY;
     }
     public boolean safeMove(int col, Particle part)
     {
@@ -104,7 +130,7 @@ public class World {
             else
                 break;
         }
-        return count == (int) part.pos.y;
+        return count == (int) part.getPos().y;
     }
     public int partCount(int col)
     {

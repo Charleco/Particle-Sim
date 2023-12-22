@@ -5,10 +5,10 @@ import com.badlogic.gdx.math.Vector2;
 public class Particle {
 
     public final float mass;
-    public Vector2 pos;
-    public Vector2 vel;
-    public Vector2 accel;
-    public World world;
+    private Vector2 pos;
+    private Vector2 vel;
+    private Vector2 accel;
+    private World world;
     public Particle(float mass,int y,int x, World world)
     {
         this.pos = new Vector2(x,y);
@@ -16,8 +16,24 @@ public class Particle {
         this.accel = new Vector2(0f,0f);
         this.mass = mass;
         this.world =world;
-        world.partList.add(this);
-        world.grid[(int) (pos.y)][(int) (pos.x)] = this;
+        world.getPartList().add(this);
+        world.getGrid()[(int) (pos.y)][(int) (pos.x)] = this;
+    }
+    public Vector2 getPos()
+    {
+        return this.pos;
+    }
+    public Vector2 getVel()
+    {
+        return this.vel;
+    }
+    public Vector2 getAccel()
+    {
+        return this.accel;
+    }
+    public World getWorld()
+    {
+        return this.world;
     }
     public void move(float delta)
     {
@@ -26,7 +42,7 @@ public class Particle {
         {
             pos.y=1;
         }
-        else if(world.grid[(int) ((pos.y-1))][(int) (pos.x)]!=null)
+        else if(world.getGrid()[(int) ((pos.y-1))][(int) (pos.x)]!=null)
         {
             vel.y=0;
             pos.y= Math.abs(pos.y);

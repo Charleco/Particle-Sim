@@ -25,16 +25,9 @@ public class ParticleSim extends ApplicationAdapter implements InputProcessor{
         cam.position.set(view.getWorldWidth()/2,view.getWorldHeight()/2,0);
         cam.update();
         world = new World(5);
+        world.popGrid();
         rend = new ShapeRenderer();
         Gdx.input.setInputProcessor(this);
-
-        for(int i =0;i<world.grid.length;i++)
-        {
-            for(int j = 0;j<world.grid[i].length;j++) {
-                if(j%2==0&&i%2==0)
-                    new Particle(1,i,j,world);
-            }
-        }
     }
     @Override
     public void render() {
@@ -43,13 +36,13 @@ public class ParticleSim extends ApplicationAdapter implements InputProcessor{
         delta = Gdx.graphics.getDeltaTime();
         world.gridUpdate();
 
-        for(int i =1;i<world.grid.length;i++)
+        for(int i = 1; i< world.getGrid().length; i++)
         {
-            for(int j = 1;j<world.grid[i].length;j++) {
-                if(world.grid[i][j]!=null)
+            for(int j = 1; j< world.getGrid()[i].length; j++) {
+                if(world.getGrid()[i][j]!=null)
                 {
-                    world.grid[i][j].grav(delta);
-                    world.grid[i][j].move(delta);
+                    world.getGrid()[i][j].grav(delta);
+                    world.getGrid()[i][j].move(delta);
                 }
             }
         }
@@ -96,20 +89,15 @@ public class ParticleSim extends ApplicationAdapter implements InputProcessor{
         dragging = true;
         int x = (int)tp.x;
         int y = (int)tp.y;
-        if(tp.x> world.colCount)
-            x = (int) world.colCount-2;
-        if(tp.y> world.rowCount)
-            y = (int) world.rowCount-1;
-        if(world.grid[y][x]==null) {
-            world.grid[y][x] = (new Particle(1, y, x, world));
+        if(tp.x> world.getColCount())
+            x = (int) world.getColCount()-2;
+        if(tp.y> world.getRowCount())
+            y = (int) world.getRowCount()-1;
+        if(world.getGrid()[y][x]==null) {
+            world.getGrid()[y][x] = (new Particle(1, y, x, world));
             Gdx.app.log("Particle", "New Particle: " + x+","+y);
         }
-
-
-
-
         return true;
-
     }
 
     @Override
