@@ -22,6 +22,7 @@ public class World {
         Gdx.app.log("Grid", "colCount: "+colCount+" rowCount:"+rowCount);
         this.grid = new Particle[(int) rowCount][(int) colCount];
         this.partList = new ArrayList<>();
+        popGrid();
     }
     public int getColCount()
     {
@@ -41,9 +42,9 @@ public class World {
     }
     public void popGrid()
     {
-        for(int y = 1;y<grid.length;y++)
+        for(int y = 1;y<grid.length-1;y++)
         {
-            for(int x =1;x< grid[y].length;x++)
+            for(int x =1;x< grid[y].length-1;x++)
             {
                 if(rand.nextDouble()>.7)
                 {
@@ -76,11 +77,11 @@ public class World {
     }
     public void particleDraw(ShapeRenderer rend)
     {
-        for(int y =1;y<grid.length;y++)
+        for(int y =0;y<grid.length;y++)
         {
-            for(int x = 1;x<grid[y].length;x++) {
+            for(int x = 0;x<grid[y].length;x++) {
                 if(this.grid[y][x]!=null) {
-                    int height = partGradCount(x,y);
+                    int height = heightCount(x,y);
                     rend.setColor((float)(y/height-1)*.3f,1,1,.1f);
                     rend.rect( x*scale, y*scale, scale, scale);
                 }
@@ -90,10 +91,10 @@ public class World {
     public void gridBalance() {
         for (int y = 1; y < grid.length - 1; y++) {
             for (int x = 1; x < grid[y].length - 1; x++) {
-                if (grid[y][x] != null && grid[y + 1][x] == null && grid[y - 1][x] != null && safeMove(x,grid[y][x])) {
-                    int leftCol = partCount(x - 1);
-                    int rightCol = partCount(x + 1);
-                    int thisCol = partCount(x);
+                if (grid[y][x] != null && grid[y + 1][x] == null && grid[y - 1][x] != null && moveCheck(x,grid[y][x])) {
+                    int leftCol = colCount(x - 1);
+                    int rightCol = colCount(x + 1);
+                    int thisCol = colCount(x);
 
                     if (leftCol < thisCol && leftCol < rightCol && grid[y][x - 1] == null && thisCol-leftCol>1) {
                         moveParticle(x, y, x - 1, y);
@@ -119,7 +120,7 @@ public class World {
         temp.getPos().x = newX;
         temp.getPos().y = newY;
     }
-    public boolean safeMove(int col, Particle part)
+    public boolean moveCheck(int col, Particle part)
     {
         int count=0;
         for(int y=1;y< grid.length;y++)
@@ -132,15 +133,17 @@ public class World {
         }
         return count == (int) part.getPos().y;
     }
-    public int partCount(int col)
+    public int colCount(int col)
     {
         int count = 0;
         for(int y = 1;y<grid.length;y++)
             if(grid[y][col]!=null)
                 count++;
+            else
+                break;
         return count;
     }
-    public int partGradCount(int col, int row)
+    public int heightCount(int col, int row)
     {
         int count = 0;
         for(int y = row;y<grid.length;y++)
